@@ -1,0 +1,11 @@
+Clear sky radiance (350-1780 nm) reconstructed from all-sky image and capture time
+
+Whole sky predictions within 7.5% RMSD of measurements, validated with libRadtran
+
+Dataset of 400+ correlated all-sky images and spectroradiometer measurements
+
+Four regression models trained and tested with machine learning techniques
+
+Experiments on raw vs compressed, HDR imagery, color model, and spectrum resolution
+
+Real-time applications of this research are targeted and suggested

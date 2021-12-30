@@ -1,0 +1,25 @@
+Registration confirmation code: B51D8B
+
+Author:
+Joseph Del Rocco
+Engineering, Computer Science, Modeling and Simulation
+College of Engineering and Computer Science
+Computer Science PhD
+
+Title:
+Predicting clear sky energy with machine learning
+
+Abstract:
+At least 40% of energy use in the U.S. is spent on residential and commercial buildings (more internationally, and much more if manufacturing is considered). In the field of sustainable design and building performance, we strive to empower architects, builders and maintenance professionals with the tools needed to design, build and maintain energy efficient buildings. Natural light (sky radiance) and its impact on building lighting and heating is often oversimplified. For physically accurate calculations with skies, spectral distributions of energy are needed. And unlike wide-area values like temperature and humidity, they should be available for every point in the sky, since the angle of incidence is paramount to radiative transfer and lighting models. In this work, we used machine learning models to estimate spectral sky radiance for clear skies for the entire skydome. We identify useful machine learning training and prediction features and experiment with various regression models. Whole sky radiance estimation is achieved within 8% RMSD (1nm spectral resolution, 350-1750nm range).
+
+Published work disclaimer:
+The project is on-going. Future work is expected.
+
+A portion of this research was presented orally (no poster) here:
+J. Del Rocco, C. B. Patterson, H. Dhrif, and J. T. Kider Jr, “Learning and estimating whole sky visible, vnir, swir radiance distributions from a commercial camera,” in Proc. SPIE 10751, (SPIE, 2018), p. 107510
+https://doi.org/10.1117/12.2321295
+
+The UCF Graduate Research Forum 2019 submission poster will not contain any images or text from the previous publication.
+
+Mentor(s): Joseph Kider, PhD, School of Modeling, Simulation, and Training
+Co-author(s): Joseph Kider, PhD; Charles Patterson, Full Sail University

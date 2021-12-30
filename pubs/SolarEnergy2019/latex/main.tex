@@ -1,0 +1,138 @@
+%\documentclass[a4paper,fleqn,longmktitle]{cas-dc}
+\documentclass[a4paper,fleqn]{cas-sc}
+
+%------------------------------------------------------------------------------
+
+% packages
+%\usepackage[authoryear,longnamesfirst]{natbib}
+\usepackage[authoryear]{natbib}
+%\usepackage[numbers]{natbib}
+\usepackage{gensymb}
+%\usepackage{amsmath} % for centering equations
+\usepackage[permil]{overpic} % figure annotations
+\usepackage{pict2e} % figure polygon annotations
+\usepackage{framed} % Framing content
+\usepackage{nomencl} % Nomenclature package
+%\usepackage{cuted}
+%\usepackage{lineno}
+%\usepackage{soul} 
+%\usepackage{lipsum}
+
+%------------------------------------------------------------------------------
+
+% macros
+\let\WriteBookmarks\relax
+\def\figureautorefname{Fig.}
+\def\equationautorefname{Eq.}
+%\def\tableautorefname{Tbl.}
+\def\sectionautorefname{Section}
+\def\subsectionautorefname{Subsection}
+\def\floatpagepagefraction{1}
+\def\textpagefraction{.001}
+\newcommand{\f}{\mkern-2mu f\mkern-3mu}
+
+%------------------------------------------------------------------------------
+
+% style
+%\bibliographystyle{model1-num-names}
+\bibliographystyle{cas-model2-names}
+\makenomenclature
+\setlength{\nomlabelwidth}{13mm}
+\setlength{\nomitemsep}{-\parskip} % Baseline skip between items
+% \setlength{\abovecaptionskip}{0pt plus 1.0pt minus 1.0pt}
+% \setlength{\textfloatsep}{20pt plus 2.0pt minus 4.0pt}
+% \textfloatsep: 20.0pt plus 2.0pt minus 4.0pt;
+% \floatsep: 12.0pt plus 2.0pt minus 2.0pt;
+% \intextsep: 12.0pt plus 2.0pt minus 2.0pt
+% \linenumbers
+
+%------------------------------------------------------------------------------
+
+\begin{document}
+
+% title
+\title [mode = title]{Real-time spectral radiance estimation of hemispherical clear skies with machine learned regression models}
+\shorttitle{Real-time spectral radiance estimation of clear skies}
+% \tnotemark[1]
+% \tnotetext[1]{This document is the results of the research
+%   project funded by the National Science Foundation.}
+
+% authors
+\shortauthors{J. Del Rocco et~al.}
+\author[1]{{Joseph} {Del Rocco}}
+\cormark[1]
+% \fnmark[1]
+\ead{jdelrocco@ist.ucf.edu}
+% \ead[url]{www.cvr.cc, cvr@sayahna.org}
+% \credit{Conceptualization of this study, Methodology, Software}
+\author[2]{Paul D. Bourke}
+\author[3]{Charles B. Patterson}
+\author[1]{Joseph T. Kider}
+\address[1]{IST, School of Modeling, Simulation, \& Training, University of Central Florida, Orlando, FL, USA}
+\address[2]{University of Western Australia, Crawley WA, Australia}
+\address[3]{Full Sail University, Winter Park, FL, USA}
+
+% title footnotes
+\cortext[cor1]{Corresponding author.}
+% \cortext[cor2]{Principal corresponding author}
+% \nonumnote{jdelrocco@ist.ucf.edu (J. Del Rocco)}
+% \fntext[fn2]{Another author footnote, this is a very long footnote and
+%   it should be a really long footnote. But this footnote is not yet
+%   sufficiently long enough to make two lines of footnote text.}
+% \nonumnote{This note has no numbers. In this work we demonstrate $a_b$
+%   the formation Y\_1 of a new type of polariton on the interface
+%   between a cuprous oxide slab and a polystyrene micro-sphere placed
+%   on the slab.
+%   }
+
+% abstract
+\input{tex/0_abstract}
+
+% \begin{graphicalabstract}
+% \includegraphics{figs/grabs.pdf}
+% \end{graphicalabstract}
+
+% \begin{highlights}
+% \item Research highlights item 1
+% \item Research highlights item 2
+% \end{highlights}
+
+% keywords
+\begin{keywords}
+sky radiance \sep spectral radiance \sep all sky \sep machine learning \sep building performance \sep HDR
+\end{keywords}
+
+\maketitle
+
+% text
+\input{tex/1_introduction.tex}
+\input{tex/2_background.tex}
+\input{tex/3_data.tex}
+\input{tex/4_methods.tex}
+\input{tex/5_results.tex}
+\input{tex/6_validation.tex}
+\input{tex/7_conclusions.tex}
+\input{tex/8_acknowledgements.tex}
+
+% list author credit taxonomy contribution roles tagged using \verb+\credit+ 
+% \printcredits
+
+% bibliography
+\bibliography{refs}
+%\vskip3pt
+
+% Appendix sections are coded under \verb+\appendix+.
+%\appendix
+%\mbox{}
+%\clearpage
+
+% \input{tex/9_appendix_a.tex}
+% \input{tex/9_appendix_b.tex}
+% \input{tex/9_appendix_c.tex}
+% \input{tex/9_appendix_d.tex}
+
+% \bio{}
+% Author biography without author photo.
+% \endbio
+
+\end{document}

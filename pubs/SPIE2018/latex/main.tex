@@ -1,0 +1,86 @@
+\documentclass[]{spie} % US letter paper
+%\documentclass[a4paper]{spie} % A4 paper
+%\documentclass[nocompress]{spie} % no compression of citations
+\renewcommand{\baselinestretch}{1.0} % 1.65 for double spacing 
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{csquotes}
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{soul}
+\usepackage{float}
+\usepackage{stackengine}
+\usepackage{gensymb}
+\usepackage{booktabs}
+% \usepackage{lipsum}
+\usepackage{colortbl}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\definecolor{tablegrey}{HTML}{808080}
+
+% style
+\pagestyle{empty}
+%\pagestyle{plain} % for page numbers
+%\setcounter{page}{301} % start numbering at 301
+%\sethlcolor{green} % default highlighter
+%\definecolor{example}{RGB}{28, 69, 135} % custom color
+%\colorlet{shadecolor}{orange}
+
+% macros
+\DeclareQuoteStyle[american]{english}{\itshape\textquotedblleft}[\textquotedblleft]{\textquotedblright}[0.05em]{\textquoteleft}{\textquoteright}
+\DeclareRobustCommand{\hlnote}[1]{{\sethlcolor{green}\hl{\textsc{#1}}}}
+\DeclareRobustCommand{\framenote}[1]{{\colorlet{shadegreen}{yellow}\begin{shaded}#1\end{shaded}}}
+
+% title
+\title{Learning and estimating whole sky visible, VNIR, SWIR radiance distributions from a commercial camera}
+
+% authors
+\author[a]{Joseph Del Rocco}
+\author[b]{Charles Brandon Patterson}
+\author[c]{Hassen Dhrif}
+\author[a]{Joseph T. Kider Jr.}
+\affil[a]{Institute for Simulation and Training, University of Central Florida, Orlando, FL, USA}
+\affil[b]{Full Sail University, Winter Park, FL, USA}
+\affil[c]{University of Miami, Coral Gables, FL, USA}
+\authorinfo{Send correspondence to: Joseph Del Rocco, jdelrocco@ist.ucf.edu}
+
+% main document
+\begin{document} 
+\maketitle
+
+% teaser
+\vfill
+\begin{figure}[H]
+\begin{center}
+  \begin{tabular}{!{\color{tablegrey}\vrule}cc!{\color{tablegrey}\vrule}cc!{\color{tablegrey}\vrule}}
+	\arrayrulecolor{tablegrey}\hline
+	\includegraphics[width=0.448\textwidth]{img/story_train.png}
+	& & &
+	\includegraphics[width=0.448\textwidth]{img/story_predict.png}
+	\\\arrayrulecolor{tablegrey}\hline
+	\cellcolor{blue!11} \footnotesize {Offline Learning (Precomputation)} &\cellcolor{blue!11} &\cellcolor{red!11} & \cellcolor{red!11}\footnotesize{Whole Sky Spectral Radiance Estimation (Real-time)}
+	\\\arrayrulecolor{tablegrey}\hline
+\end{tabular}
+\end{center}\vspace{-2mm}
+\caption{We estimate sky radiance distribution curves between 350-2500nm from images captured with a digital camera. (Left) We use measurements from a commercial digital camera and a sky scanning spectroradiometer to train machine learning algorithms. (Right) We then utilize this ML model to take new sky images and produce the whole sky spectral illumination in real-time.
+We have validated this approach to measured data.
+}
+\label{fig:teaser}
+\end{figure}
+\vfill
+
+% text
+\input{tex/0_abstract}
+\keywords{Sky Radiance, Radiance Distribution, Multispectral, Machine Learning, Regression, Sky Viewer}
+\input{tex/1_introduction}
+\input{tex/2_data}
+\input{tex/3_methods}
+\input{tex/4_results}
+\input{tex/5_conclusions}
+\input{tex/6_acknowledgements}
+
+% references
+\bibliography{citations} % bibliography data in report.bib
+\bibliographystyle{spiebib} % makes bibtex use spiebib.bst
+\end{document} 

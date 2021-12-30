@@ -1,0 +1,234 @@
+----------------------------------------------
+Kider Jr, J. T., Knowlton, D., Newlin, J., Li, Y. K., & Greenberg, D. P. (2014). A framework for the experimental comparison of solar and skydome illumination. ACM Transactions on Graphics (TOG), 33(6), 180.
+----------------------------------------------
+
+Our data measurements came from this work!
+
+----------------------------------------------
+Saito, M., & Iwabuchi, H. (2016). Cloud Discrimination from Sky Images Using a Clear-Sky Index. Journal of Atmospheric and Oceanic Technology, 33(8), 1583–1595.
+----------------------------------------------
+----------------------------------------------
+Saito, M., Iwabuchi, H., & Murata, I. (2016). Estimation of spectral distribution of sky radiance using a commercial digital camera. Applied Optics, 55(2), 415.
+----------------------------------------------
+
+Data:
+430-680nm
+194 total samples/images (not clear how many were used for spectral bias graphs)
+Results shown for 3 images and thus 3 zenith samples
+
+Contributions:
+(*) Estimating spectral distribution without training sets
+(*) More accurate solution for deriving color matching functions (CMFs) of cameras:
+ - Improved upon experiment by (Sigernes et al. - Sensitivity calibration of digital colour cameras for auroral imaging)
+ - Saito et al. claim that Signernes' experiment "provided erroneous CMFs".
+ - Lens "wavelength dependence" and vignetting effect was considered, showing that pixel counts decline the farther they are from the center pixel
+ - "optimal estimation method" for computing RGB counts using "maximum a posteriori" (MAP) with Sigernes' camera as prior information
+ - CMOS noise was considered (calculated from stddev of RGB counts in 8x8 blocks)
+(*) Estimating spectral shape per pixel using a single linear algebra equation, using total ozone column and RGB RAW counts
+
+Weaknesses:
+(*) Focuses on wavelengths 430-680nm. Diverging results above 680nm are speculated to be calibration and calculation bias.
+(*) Only "the zenith" is considered in the experiments, so likely sample point in middle of the sky
+(*) CMF matrices are created from samples of spectral radiance (every 5nm and every 10nm) and then integrated. Exact values are not used.
+(*) Calibration of USB4000 spectrometer may be suspect below 450nm due to low signal-to-noise ratio.
+(*) Temperature dependence of CMOS response and stray light are said to be "two major error sources that may lead to significant uncertainty". These are reported to contribute ~5% uncertainty each.
+(*) Lens distortion is dismissed as negligible as "several studies have shown that recent commercially available lenses exhibited very slight distortions".
+
+Error metrics:
+RMSD of spectral radiance (16-18% between 430-680nm)
+SSB (spectral shape bias) = normalizing the spectral radiance at 550nm with itself = Icam(lamda)/Iother(lamda) * Iother(550nm)/Icam(550nm) - 1
+spectral radiance curves and their "ratios"
+CMF spectral sensitivity
+
+Validation:
+USB4000 spectrometer
+RSTAR6b RTM
+
+Equipment:
+Nikon D7000 (DSLR) (CMOS) (NEF RAW images) (4948x3280) (ISO 200) (f/2.8) (1/4096s exp)
+Nikkor equisolid angle-type fullframe fisheye lens (AF DX Fisheye-Nikkor, 10.5mm f/2.8G ED)
+CS2000A spectroradiometer
+Ozone Monitoring Instrument (OMI) onboard Aura satellite (for total ozone column)
+Ocean Optics USB4000 spectrometer calibrated w/ MCPD-9800 spectroradiometer (for validation)
+Skyradiometer operated by SKYNET for aerosol properties like AOT, particle size distribution, refractive indices
+
+----------------------------------------------
+Tohsing, K., Schrempf, M., Riechelmann, S., & Seckmeyer, G. (2014). Validation of spectral sky radiance derived from all-sky camera images-a case study. Atmospheric Measurement Techniques 7 (2014), Nr. 7.
+----------------------------------------------
+
+Data:
+380-760nm
+333 total images (!! merged from 11655 images, 35 images per capture timestamp)
+37629 total samples (!! absolute maximum; very likely less; not specified in paper)
+
+Contributions:
+(*) Full hemisphere (113 spectroradiometer scan points)
+(*) Full visible spectrum (an improvement over previous methods)
+(*) Non-linear regressions learned for each wavelength (1143 of them, 3 per wavelength studied), using the non-linear relationship between RGB counts to radiance value
+(*) Nice visualization of full hemisphere error (at 500nm only)
+
+Weaknesses:
+(*) 2 distinct models (cloud-free and overcast). No uniform model across all skies.
+(*) Full hemisphere scans took 12min. "In order to use the radiance distribution of the CCD spectroradiometer for the validation, a synchronized HSI image is constructed. [...] the pixels of each scan point were taken from the corresponding all-sky image, depending on the time of measurement"
+(*) Only 1 cloud-free and 1 overcast day used for training - small percentage of data used for training compared to validation
+(*) Spectroradiometer measure every 2nm, not every wavelength
+(*) Different regressions would need to be computed for different cameras (exposure, aperature, etc.)
+(*) No validation against simulated models
+
+Error metrics:
+MBD
+RMSD
+
+Validation:
+??# samples used as test cases
+
+Equipment:
+Hemispherical sky imager (HSI) by Institute of Meteorology and Climatology (IMuK) U of Hanover, Germany:
+ - Canon Power Shot G10
+ - Dorr DHG fisheye 183° FOV
+
+----------------------------------------------
+Chauvin, R., Nou, J., Thil, S., & Grieu, S. (2015). Modelling the clear-sky intensity distribution using a sky imager. Solar Energy, 119, 1–17.
+----------------------------------------------
+
+Data:
+
+
+Contributions:
+(*) Custom-built sky imager system
+(*) Removal of clear-sky anisotropy from sky images to improve cloud detection. Previous cloud detection methods are more coarse and often classify the sun as a cloud or thin clouds as clear sky, according to the authors
+
+Weaknesses:
+Error metrics:
+Validation:
+Equipment:
+
+----------------------------------------------
+Román, R., Antón, M., Cazorla, A., de Miguel, A., Olmo, F. J., Bilbao, J., & Alados-Arboledas, L. (2012). Calibration of an all-sky camera for obtaining sky radiance at three wavelengths. Atmospheric Measurement Techniques, 5(8), 2013–2024.
+----------------------------------------------
+
+Contributions:
+Weaknesses:
+Error metrics:
+Validation:
+
+Equipment:
+All-Sky Imager by Atmospheric Physics Group (GFAT) (http://atmosfera2.ugr.es/en/instrumentation)
+ - QImaging RETIGA 1300C CCD color camera (TIFF) (1280x1024)
+ - Fujinon CCTV fisheye 2/3in. 185° FOV
+ - Environmental housing - transparent acrylic dome, double cylinder walls filled with polyurethane foam
+ - Supercool Peltier cell coupled to CCD for cooling, to reduce dark noise, etc. (25°C most of the time)
+ - Kipp & Zonen 2AP Sun Tracker/Positioner
+ - custom control software for: capture time, options, formats, etc.
+
+----------------------------------------------
+Cazorla, A., Olmo, F., & Alados-Arboledas, L. (2008a). Using a sky imager for aerosol characterization. Atmospheric Environment, 42(11), 2739–2745.
+----------------------------------------------
+
+Data:
+1018 cloudless sky images captured between 10/2005 to 02/2006
++/- 1 minute for corrleation between interval of capture
+
+Contributions:
+(*) Calculating/estimating/deriving aerosol optical depth (AOD) and Angstrom turbidity α parameter, which affects aeorsol features and size and ultimately radiance curve
+(*) Use of neural network due to "limited success of analytical procedures"
+
+Weaknesses:
+(*) Only 2 wavelengths considered (440 and 670), because ultimately doing red/blue cloud detection.
+(*) 2 separate neural network models, one for each wavelength.
+(*) training set diversity is limited (by their own remarks) - few case of high AOD and small α parameter
+(*) Data divided into Train/Test, no cross-validation mentioned. Division not specified.
+
+Error metrics:
+MSE
+RMSD
+MBD
+R2
+
+Validation:
+just using the test set of data on the model
+
+Equipment:
+All-Sky Imager by Atmospheric Physics Group (GFAT) (http://atmosfera2.ugr.es/en/instrumentation)
+ - QImaging RETIGA 1300C CCD color camera (TIFF) (1280x1024)
+ - Fujinon CCTV fisheye 2/3in. 185° FOV
+ - Environmental housing - transparent acrylic dome, double cylinder walls filled with polyurethane foam
+ - Supercool Peltier cell coupled to CCD for cooling, to reduce dark noise, etc. (25°C most of the time)
+ - Kipp & Zonen 2AP Sun Tracker/Positioner
+ - custom control software for: capture time, options, formats, etc.
+CE-318-4 sun/sky photometer by CIMEL Electronic (France)
+ - part of AERONET network
+
+----------------------------------------------
+Cazorla, A., Olmo, F. J., & Alados-Arboledas, L. (2008b). Development of a sky imager for cloud cover assessment. JOSA A, 25(1), 29–39.
+----------------------------------------------
+
+Data:
+440-1020nm Angstrom α parameter
+50 total images
+1000 total samples
+
+Contributions:
+(*) Objective vs subjective estimation of cloud cover
+(*) Use of neural network for cloud cover estimation problem in real time
+ - 18 features (originally)
+ - RGB and grayscale of pixels and mean weighted 3x3 region
+ - variance for RGB and grayscale of pixels and mean weighted 3x3 region
+ - R/G, R/B, G/R, G/B, B/R, B/G ratios
+(*) Use of genetic algorithm to try and find the best (most meaningful) inputs to the MLPNN (interesting way to approach feature selection)
+ - of the original 18 features, only 3 were used for best results: mean of red pixel and 3x3 region, mean of blue pixel and 3x3 region, variance of red pixel and 3x3 region
+
+Weaknesses:
+(*) Lower resolution images (1280x1024)
+(*) 1000 total samples divided into 2 for training and testing (cross-validation not mentioned)
+(*) The genetic algorithm approach only improved the error metric by 3% (from 82% to 85%)
+(*) In regards to existing cloud cover assessment algorithms from all-sky imagers, the authors state "The most used algorithm is based on threshold of the red/blue ratio image [22], but this method has some weakness for cloud classification near the horizon, and in near-Sun regions is unable to distinguish cloud classes." However, they themselves only use images with zenith angles of <= 80°, and their sky imager uses a sun tracker / solar shadowing ball that blocks the sun's position from the lens specifically to avoid sun overexposure
+
+Error metrics:
+error in classification rate = number of errors divided by number of test cases
+performance = 1 - error rate
+okta count (cloud cover assessment)
+
+Validation:
+50% of samples used as test cases during pixel classification
+METAR (aviation routine weather report) at closest meteorological station
+
+Equipment:
+All-Sky Imager by Atmospheric Physics Group (GFAT) (http://atmosfera2.ugr.es/en/instrumentation)
+ - QImaging RETIGA 1300C CCD color camera (TIFF) (1280x1024)
+ - Fujinon CCTV fisheye 2/3in. 185° FOV
+ - Environmental housing - transparent acrylic dome, double cylinder walls filled with polyurethane foam
+ - Supercool Peltier cell coupled to CCD for cooling, to reduce dark noise, etc. (25°C most of the time)
+ - Kipp & Zonen 2AP Sun Tracker/Positioner
+ - custom control software for: capture time, options, formats, etc.
+
+----------------------------------------------
+Cordero, R. R., Damiani, A., Ferrer, J., Rayas, J., Jorquera, J., Tobar, M., … Laroze, D. (2013). Downwelling and upwelling radiance distributions sampled under cloudless conditions in Antarctica. Applied Optics, 52(25), 6287.
+----------------------------------------------
+----------------------------------------------
+Ehrlich, A., Bierwirth, E., Wendisch, M., Herber, A., & Gayet, J.-F. (2012). Airborne hyperspectral observations of surface and cloud directional reflectivity using a commercial digital camera. Atmospheric Chemistry and Physics, 12(7), 3493–3510.
+----------------------------------------------
+----------------------------------------------
+Juan, H., & Da-Ren, L. (2009). Calibration and Validation of an All-Sky Imager. Atmospheric and Oceanic Science Letters, 2(4), 220–223.
+----------------------------------------------
+----------------------------------------------
+Milton, E. J., & Rollin, E. M. (2006). Estimating the irradiance spectrum from measurements in a limited number of spectral bands. Remote Sensing of Environment, 100(3), 348–355.
+----------------------------------------------
+----------------------------------------------
+Pissulla, D., Seckmeyer, G., Cordero, R. R., Blumthaler, M., Schallhart, B., Webb, A., … Kowalewski, M. (2009). Comparison of atmospheric spectral radiance measurements from five independently calibrated systems. Photochemical & Photobiological Sciences, 8(4), 516.
+----------------------------------------------
+----------------------------------------------
+Steven, M. D., & Unsworth, M. H. (1977). Standard distributions of clear sky radiance. Quarterly Journal of the Royal Meteorological Society, 103(437), 457–465.
+----------------------------------------------
+----------------------------------------------
+López-Álvarez, M. A., Hernández-Andrés, J., Romero, J., Olmo, F. J., Cazorla, A., & Alados-Arboledas, L. (2008). Using a trichromatic CCD camera for spectral skylight estimation. Applied Optics, 47(34), H31–H38.
+----------------------------------------------
+----------------------------------------------
+Kocifaj, M. (2014). Modeling the night-sky radiances and inversion of multi-angle and multi-spectral radiance data. Journal of Quantitative Spectroscopy and Radiative Transfer, 139, 35–42.
+----------------------------------------------
+----------------------------------------------
+Kocifaj, M. (2015). Unified model of radiance patterns under arbitrary sky conditions. Solar Energy, 115, 40–51.
+----------------------------------------------
+----------------------------------------------
+Lee Jr, R. L. (2008). Measuring overcast colors with all-sky imaging. Applied Optics, 47(34), H106–H115.
+----------------------------------------------

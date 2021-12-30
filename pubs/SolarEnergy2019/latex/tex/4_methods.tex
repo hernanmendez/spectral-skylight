@@ -1,0 +1,202 @@
+\section{Methods and experiments}
+\label{sec:method}
+
+\begin{figure}[pos=tbp]
+\begin{center}
+\begin{overpic}[width=0.82\textwidth]{img/flowchart_a.pdf}
+\put(10,140){(1) Offline / precompute pipeline}%
+\put(175,20){(a)}%
+\put(372,20){(b)}%
+\put(570,20){(c)}%
+\put(767,20){(d)}%
+\put(965,20){(e)}%
+\end{overpic}\\%
+\vspace{6mm}
+\begin{overpic}[width=0.385\textwidth]{img/flowchart_b.pdf}
+\put(20,220){(2) Real-time pipelines for downstream applications}%
+\end{overpic}%
+~~~~~~~%
+\begin{overpic}[width=0.385\textwidth]{img/flowchart_c.pdf}
+\end{overpic}%
+\end{center}
+\vspace{-2mm}
+\caption[flowchart]{Our method is split into two parts, (1) offline learning to produce a model for (2) real-time application use. (a) is described in \citet{kider_framework_2014}. (b) is our viewer/exporter tool used to correlate, inspect, and export datasets. (c) is the clear sky dataset used for this work; each sample of which contains the features depicted in \autoref{fig:features}. (d) consists of the methods described in \autoref{sec:method}. While testing on the non-holdout portion of our dataset, we identified data anomalies, incorporated lens linearity equations and engineered new features, which resulted in data being reexported (depicted as transition from (d) back to (b)). (e) represents one of our four final regression models produced from this work. In (2), the input features of 81 sky samples from each of our four holdout test skies (\autoref{tab:testskies}) are passed through a model to predict spectral radiance distribution, which are compared to their corresponding ground truth measurements to produce error plots and validated against libRadtran. Finally, a whole sky image can be passed through a model to produce a spectral radiance map (sradmap), where each ``pixel'' is a spectral radiance distribution.}
+\label{fig:flowchart}
+\end{figure}
+
+The research question for this work asks whether it is possible (or not) to estimate the atmospheric radiance distribution of a clear sky given only a picture of said sky and its capture timestamp. In other words, is there a relationship between what a commodity camera sees in the sky, the time of day, and the underlying spectral energy, despite the fact that we know solar radiation scattering is a complex process where energy is absorbed and scattered by atmospheric particles at certain wavelengths? Is it possible for mere photos of the sky to give acceptable/useful estimates of energy for use in downstream applications? In this work, we propose a data-driven method (machine learning on a dataset of measurements) to help us search for such a relationship. But given the sheer magnitude of machine learning approaches (statistical models, artificial neural networks, support vector machines, etc.), we limit the scope of this research to regression models. Predicting a curve (i.e. not a single output) is more of a regression problem, as opposed to classification or clustering.
+
+A supervised approach is natural, given our measurements and problem formulation. Given photos of skies, their capture timestamp, and 81 corresponding spectral radiance measurements (curves/distributions) per sky, is there a correlation? The radiance measurements are natural ground truths for what a camera sees at those 81 points in the sky. As mentioned, we focused on clear sky measurements, specifically 6006 samples (or $\mathtt{\sim}$17\% of our entire data set), where each sample represented a single point in a clear sky coupled with capture timestamp and corresponding spectral radiance measurement. In our initial approach \citep{delrocco_spie}, we culled all samples within a 20\degree~circumsolar region, like prior authors \citet{saito_estimation_2016} and \citet{tohsing_validation_2014}. The work of \cite{chauvin_modelling_2015}, who investigated the radiance profile within the circumsolar region, encouraged us to use all valid sky samples. Samples closer to the sun are important, as the bulk of energy comes from this area of the sky.
+
+We developed a viewer / exporter / converter tool to manage our large dataset and export subset collections of data \citep{delrocco_spie} and (\autoref{fig:flowchart}(1b)). Our collection of exported clear sky samples was then partitioned into an 80:20 train/test:holdout ratio, where samples from four arbitrary skies (\autoref{tab:testskies}), selected at random, were kept in the holdout partition. The train/test partition was then randomized with the same pseudorandom seed to keep the training and testing data consistent across runs, and 10-fold cross-validation was utilized to allow us to divide this partition into training and testing separately while tuning the models. It was also used to dampen the effects of outliers on subsets of data \citep{picard_cv, kohavi_cvstudy}. At no point in the tuning of models was the holdout data used for testing. These techniques are often employed to help minimize overfitting and data leakage.
+
+\begin{table}[width=.9\linewidth,cols=5,pos=t] %
+\caption{Four holdout test skies selected at random. Table of all measurements listed in  \cite{delrocco_spie}}
+\label{tab:testskies}
+\begin{tabular*}{\tblwidth}{@{} CCCCC@{} }
+\toprule
+Date & Time & Part of Day & Season & Sky Cover\\
+\midrule
+05/26/2013 & 15:15 & Afternoon & Spring & CLR\\
+05/27/2013 & 10:15 & Morning & Spring & CLR\\
+07/26/2013 & 13:15 & Midday & Summer & CLR\\
+09/24/2013 & 15:39 & Afternoon & Fall & CLR\\
+\bottomrule
+\end{tabular*}
+\end{table}
+
+%\textit{"Easily the most important factor \emph{[for success or failure of machine learning]} is the features used."} \citep{domingos_feature}.
+
+Each sky sample of \autoref{fig:flowchart}(1c) consisted of a vector of input and output features. From the raw measurements of capture timestamp, sample azimuth and altitude, sky color, and spectral radiance measurement, we engineered and computed the additional features: sun azimuth and altitude, sun-point-angle (SPA), quarter, month, week, day and hour. The capture timestamp was initially included as a single integral feature, but was later ``binned'' \citep{macskassy_binning} into discrete datetime groupings to help the models better account for seasonal and diurnal variation in clear sky turbidity \citep{eltbaakh_2012}. Sun position was computed with the solar position algorithm provided by the US National Renewable Energy Laboratory (NREL) \citep{reda_spa}. SPA comes from the insights of \citet{chauvin_modelling_2015}, and was not included in our initial work.
+
+Various exploratory data analysis (EDA) techniques (\autoref{fig:eda}) were employed to gauge the significance of each possible input feature, including: histograms, correlation matrix, collinearity matrix, outlier detection, and feature importance \citep{yu_eda}. EDA scores are univariate and calculated by scikit-learn directly \citep{pedregosa_scikit}. For correlation and collinearity, in general, the more correlated input features are to the output, the better they will perform as predictors, but the more correlated they are to each, the more overlap. F-measure (f-score) is the ratio of harmonic mean precision and recall, often used as a prediction effectiveness measure, is well documented in statistics literature, and included in most machine learning libraries \citep{cooper_fmeasure, van_fmeasure, chinchor_fmeasure, sasaki_fmeasure, pedregosa_scikit}.
+
+As \autoref{fig:eda} shows, all datetime features are naturally correlated, but equally important. By binning the datetime, we hope the model captures seasonal and time of day variation, which has been shown to affect turbidity (\citep{eltbaakh_2012}). The three components of a single color sample (a Gaussian convolution of pixels within a 1\degree~portion of the sky) are also naturally highly correlated. The hour of day feature likely correlates to sun azimuth more than altitude because on a 2D projected fisheye photo of the sky, the sun's azimuth varies more than its altitude. Sky sample color components were found to be the most important features. When HDR data was investigated, longer (brighter) exposures were found to be more significant than shorter (darker) exposures. Initially, sample azimuth and altitude were of some importance, but after SPA was added, both sample azimuth and altitude scored as much less important, likely because SPA is a combination of both sun and sample locations in a single feature. The sample altitude feature was dropped completely. Sample azimuth was retained because tests without it affected results slightly ($\mathtt{\sim}$2\% RMSD). As \autoref{fig:eda}(c) shows, 81 samples per capture evenly distributed across the sky resulted in a nearly flat distribution of sample azimuth values. The final input and output features of each sky sample used by our models are shown in \autoref{fig:features}.
+
+\begin{figure}[pos=tbp]
+\begin{center}
+\begin{overpic}[width=0.55\textwidth]{img/features.pdf}
+\put  (85,500) {engineered}
+\put (315,500) {computed}
+\put (515,500) {measured}
+\put (315,20) {inputs}
+\put (790,20) {outputs}
+\end{overpic}
+\end{center}
+\vspace{-3mm}
+\caption[features]{A single sky sample consists of 12 input features and 1430 output features (the spectral radiance curve between 350-1780 nm). Capture timestamp was binned into separate features to help capture seasonal variation. Sun azimuth and altitude were computed via NREL sun position algorithm. Sample azimuth and altitude were inherent to sky scanning logic, yet EDA found them to be of little importance. The three color features are components of single sky color per sample, relative to color model used (e.g. RGB, HSV, etc.).}
+\label{fig:features}
+\end{figure}
+
+\begin{figure}[pos=tbp]
+\begin{center}
+\frame{\begin{overpic}[width=0.17\textwidth]{img/feature_sunazi.pdf}%
+\put(20,700){(a)}%
+\end{overpic}}%
+~%
+\frame{\begin{overpic}[width=0.17\textwidth]{img/feature_sunalt.pdf}%
+\put(20,700){(b)}%
+\end{overpic}}%
+~%
+\frame{\begin{overpic}[width=0.17\textwidth]{img/feature_samazi.pdf}%
+\put(20,700){(c)}%
+\end{overpic}}%
+~%
+\frame{\begin{overpic}[width=0.17\textwidth]{img/feature_spa.pdf}%
+\put(20,700){(d)}%
+\end{overpic}}\\%
+\vspace{2mm}
+\frame{\begin{overpic}[width=0.455\textwidth]{img/feature_correlation.pdf}%
+\put(20,600){(e)}%
+\end{overpic}}
+~%
+\frame{\begin{overpic}[width=0.424\textwidth]{img/feature_importance.pdf}%
+\put(20,650){(f)}%
+\end{overpic}}
+\end{center}
+\vspace{-2mm}
+\caption[histograms]{Plots of individual machine learning features, including histograms for (a) sun azimuth, (b) sun altitude, (c) sample azimuth, and (d) SPA. (e) shows the univariate correlation matrix of the features. Datetime components, color components, and hour of day with sun azimuth are all naturally correlated. (f) shows an estimation of importance (significance to prediction) of each feature. (d) was likely more significant because it combined the positions of both sun and sample points into a single feature. After SPA was included, sample azimuth and altitude became less important and altitude was discarded entirely.}
+\label{fig:eda}
+\end{figure}
+
+More than 10 separate regression models were trained and tested, including: linear, Ridge \citep{hoerl_ridge}, Lasso \citep{tibshirani_lasso}, ElasticNet \citep{zou_elastic}, Lars, KNN, RandomForest \citep{kocev_tree}, ExtraTrees \citep{geurts_etr}, etc. Initially, WEKA toolkit \citep{hall_weka} was used to discover possible candidate models, but ultimately all machine learning models were configured and processed with scikit-learn in Python \citep{pedregosa_scikit}. Initial tests of these models encouraged us to pursue the ones with promise. Many of the models forced a single decimal output value (not a vector), which didn't align with our approach; we are attempting to reconstruct a curve, or vector of radiance values per wavelength. We chose a proximity based model, like k-nearest-neighbors (KNN), and a decision tree based (ensemble) model to focus on. We also included a standard linear regressor (LNR) as a baseline, which we assumed would not perform well given the nature of the data and problem. Decision tree models implement a set of ``if-then-else'' rules internally for both training and prediction, and result in very large model files. We know that decision tree estimators are more prone to overfitting than any other regression model, so to further address overfitting, we used a Random Forest Regressor (RFR) specifically, which harnesses randomness to decrease variance in lieu of some bias \citep{kocev_tree}. Extra Trees Regressor \citep{geurts_etr} introduces even more randomness and a larger trade off to combat overfitting. The final collection of tuned regression models include a linear regression (LNR), k-nearest-neighbors (KNR), random forest (RFR), and extra-trees (ETR). For all four of our models, tuning was done mostly automatically with scikit-learn's GridSearch algorithm, though some hyperparameters were tuned manually, including the number of trees and maximum tree depth of the decision tree models.
+
+Four separate error metrics were used to evaluate the performance of models, including: coefficient of determination score (R\textsuperscript{2}), mean bias deviation (MBD), root mean squared deviation (RMSD), and ratio of the measured and predicted radiance curves. MBD and RMSD come from \citet{iqbal_intro}:
+\begin{equation}
+\label{eq:rmsd}
+RMSD=\sqrt[]{\frac{\sum_{i=1}^{N} (y_i-x_i)^2}{N}}
+\end{equation}
+where $N$ is the number of spectral radiance distributions considered, $y$ the predicted distributions, and $x$ the measured ground truth distributions. Recall that each distribution is a vector of radiance values between 350-1780 nm of the electromagnetic spectrum. Prior authors used MBD for single wavelength results \citep{cazorla_using_2008, tohsing_validation_2014}, but we found RMSD to be more representative of the results across a spectrum of wavelengths. The R\textsuperscript{2} metric is used during pre-holdout testing to help with model tuning, and is calculated directly from scikit-learn:
+\begin{equation}
+\label{eq:r2}
+R^2(t,p) = 1 - \frac{\sum_{i=1}^{N} (t_i-p_i)^2} {\sum_{i=1}^{N} (t_i-\bar{t}_i)^2} ~~\textrm{,}
+\end{equation}
+
+\noindent
+where $(t,p)$ is a (truth, prediction) pair, $N$ is the number of radiance distributions, and $\bar{t} = \frac{1}{N}\sum_{i=1}^{N} t_i$~. Note that this metric can be negative, despite the name R\textsuperscript{2}.
+
+In addition to our dataset tool, we developed a framework of Python scripts to send datasets through our machine learning pipeline of training, final testing, and plotting. The main script takes parameters such as: model type, dataset of sky samples, pseudo-random number seed, number of cpu cores to use, cross-validation amount, and model-specific hyperparameters such as polynomial expansion amount, maximum tree depth for decision tree pruning, etc. All source code for dataset tool and pipeline is 100\% cross-platform, open-source and freely available to the public through our project website. \footnote{~https://spectralskylight.github.io}
+
+\subsection{High-dynamic range imagery}
+\label{ssec:hdr}
+
+\begin{figure}[pos=bp]
+\begin{center}
+\begin{overpic}[width=0.60\textwidth]{img/exposures.jpg}
+% index
+\put(-4,455){(1)}%
+\put(243,455){(2)}%
+\put(490,455){(3)}%
+\put(733,455){(4)}%
+\put(-4,210){(5)}%
+\put(243,210){(6)}%
+\put(490,210){(7)}%
+\put(733,210){(8)}%
+% f-ratio
+\put(90,430){\color{white}f/16}%
+\put(330,430){\color{white}f/16}%
+\put(580,430){\color{white}f/16}%
+\put(830,430){\color{white}f/16}%
+\put(100,185){\color{white}f/4}%
+\put(345,185){\color{white}f/4}%
+\put(590,185){\color{white}f/4}%
+\put(835,185){\color{white}f/4}%
+% exposure
+\put(65,275){\color{white}1/8000s}%
+\put(310,275){\color{white}1/1000s}%
+\put(565,275){\color{white}1/250s}%
+\put(823,275){\color{white}1/15s}%
+\put(85,30){\color{white}1/32s}%
+\put(340,30){\color{white}1/4s}%
+\put(600,30){\color{white}1s}%
+\put(850,30){\color{white}2s}%
+\end{overpic}
+\end{center}
+\vspace{-2mm}
+\caption[exposures]{8 exposures were taken to account for high dynamic range of sun $+$ sky photography. f/4 aperture captures (5-8) were used for this work. 1 s exposure (7) was used for non-HDR experiments. Yellow squares highlight sun location.}
+\label{fig:exposures}
+\end{figure}
+
+Simultaneously capturing the sun and sky with photography is difficult due to the range of illumination and intensity of the sun vs. sky, as well as the temporal changes that occur. We followed the sky capture approach of \citet{stumpfel_2004}. We took eight to nine photographs (depending on the time of day) to capture $\mathtt{\sim}$17 stops of dynamic range. \autoref{fig:exposures} shows the difference in exposures captured; the top row (f/16 aperture) if best for the solar region and intensity of the sun; the bottom row (f/4 aperture) is best for the indirect skylight.
+
+This experiment was designed to test the effectiveness of using HDR imagery (multiple exposures) vs. a single exposure of the sky. For each sky sample, we used the pixel color values from exposures 5-8 (f/4 aperture) as input features for model training and prediction. Exposures 1-4 were ignored for this experiment. Although there are algorithms to merge multiple exposures into a single image for sampling, we simply sampled each exposure separately and used each sampled color as a separate input feature. Future work could include a merged color feature.
+
+\subsection{Color model}
+\label{ssec:color}
+
+Colors are qualia for combinations of electromagnetic energy within the range of wavelengths visible to humans (the visible spectrum). The human eye detects energy with the use of retinal rods and cones and the brain merges the results into what we call a color \citep{kinney_1958}. Modeling the values of these colors is a field of research in and of itself \citep{koenderink_color}. And yet, we are attempting to estimate spectral radiance using color values as a primary feature. This begs the research question: which color model best represents the underlying energy? Digital all-sky cameras typically store measurements with trichromatic RGB color models (e.g. sRGB, Adobe RGB, ProPhotoRGB, etc.), but do so mostly for historical reasons relating to technology. There are a variety of other tristimulus color models that attempt to capture more of the color space detectable by the average human \citep{poynton_tour, stone_guide}, many of which derive from the CIE 1931 RGB and XYZ color space definitions \citep{wright_cie}. However, it is unclear which model is most beneficial for machine learning algorithms processing sky images.
+
+For this experiment, we compared the overall training and predictive effectiveness of our models while only changing the color model used for each sky sample's color feature. Four separate color models were tested: sRGB \citep{stokes_srgb} (the default), HSV \citep{smith_hsv}, HSL \citep{joblove_color}, and LAB \citep{cie_lab}. All other features were fixed. Because our commercial digital camera captured skies in an sRGB format, we then converted to the other color models using algorithms provided by the Python colormath module. The resulting datasets were fed through our machine learning pipeline separately.
+
+\subsection{Spectral resolution}
+\label{ssec:resolution}
+
+\begin{figure}[pos=tbp]
+\begin{center}
+\begin{overpic}[width=0.45\textwidth]{img/resolution_curves.pdf}
+\put(-2,280){(1)}%
+\put(-2,375){(5)}%
+\put(-20,470){(10)}%
+\put(-20,565){(15)}%
+\put(-20,660){(20)}%
+\end{overpic}%
+\end{center}
+\vspace{-2mm}
+\caption[resultsresolutiongraphs]{05/26/2013 15:15 sample 24 (90\degree~azimuth, 12.12\degree~altitude) plotted at 5 different resolutions, 1, 5, 10, 15 and 20 nm, labeled accordingly. The resolution of spectral radiance distributions can be reduced depending on the downstream application.}
+\label{fig:results_resolutiongraphs}
+\end{figure}
+
+This work is intended to be used in a real-time setting, both simulated and cyber-physical, therefore model size and processing speed is important. For applications that predict a general quantity of energy in certain parts of the spectrum, it may be reasonable to limit the resolution of spectral data used during model training and prediction. Certainly, the visual difference and area under the curve (amount of energy) between a 1 nm and 10 nm resolution curve is not significant. A spectral resolution experiment was designed to find the smallest model and dataset that still predicted with acceptable accuracy, by training and testing models using spectral resolutions of 1, 5, 10, 15 and 20 nm. Note that some pure spectral colors exist entirely within a 15 nm range, and therefore resolution should not be diminished too much if color information is important. \autoref{fig:results_resolutiongraphs} shows the visual difference of the five resolutions for a single measured radiance distribution. Depending on the downstream application, there is still plenty of useful information at lower resolutions.
+
+This experiment was run on a Dell XPS 8920 PC with Intel 4 Core i7-7700K 4.20 GHz CPU and 16 GB of RAM. The operating system was x64-bit Microsoft Windows 10 Enterprise. All manually executable applications (i.e. ignoring operating system services) were closed at the time of the experiment. Five runs were executed per resolution size and the timings averaged.
+
+\subsection{sradmap}
+\label{ssec:sradmap}
+
+Downstream applications of this work may need spectral radiance estimations for the entire hemispherical sky. Ideally, our models will generalize across the space between the sky samples used for machine learning. This involves some interpolation or scaling of outputs between the learned skeletal space provided by our ground truth measurements and the entire sky. If our models do not have this ability, then usage is limited to the 81 coordinates used during measurement. Obviously the higher resolution a sky scanning pattern is, the more accurate predictions will be across the sky.
+
+To provide whole sky predictions, the same input features shown in \autoref{fig:features} can be collected for any pixel of a sky image, and then fed through a single one of our models to produce a lookup file (map) with radiance predictions per pixel. We call this resulting file a spectral radiance map (sradmap). Although the primary purpose of these files is to provide a map between pixel location and spectral radiance prediction, each prediction can be summed, normalized, and plotted against a false-color map to help visualize the topology of the data.
+
+The name sradmap is an homage to radmap by \citet{anselmo_radmap}, a supplementary tool for the daylight simulator RADIANCE \citep{ward_radiance}. In the building performance space, our sradmap generator can be integrated into daylight simulators, energy modelers, and parametric design tools like RADIANCE, EnergyPlus \citep{crawley_energyplus}, SUSTAIN \citep{greenberg_sustain}, and Ladybug Tools \citep{roudsari_ladybug}. In the computer graphics (rendering) space, sradmaps can be sampled from renderers like Mitsuba \citep{jakob_mitsuba} or Disney's Hyperion \citep{burley_hyperion}, for use in scenes with natural daylighting.
+
+%\clearpage

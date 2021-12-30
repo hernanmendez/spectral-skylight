@@ -1,0 +1,34 @@
+The minor edits have been made to the manuscript including:
+
+- revised Highlights
+
+- added 2 links to project website (which includes source and data repositories) in Abstract and Data sections
+
+- added a plot in Figure 12 to highlight result differences between using TIFF and JPG photos
+
+- replotted Figure 3 (prior work) to avoid copyright with SPIE and included all datasets (not just clear, scattered or overcast)
+
+- minor grammatical errors
+
+
+----------------------------
+
+Reviewer #1: All of my comments have been properly addressed. The reviewer looks forward to seeing the full dataset publicly available on the UCF's STARS system repository before publication. Thank the authors for their effort.
+
+----------------------------
+
+Reviewer #2: 
+I am very satisfied with the answers and the brilliant way of revising the manuscript, I liked it very much and I accept the publication of the work. However, I still have only two minor issues to be address.
+
+- Highlights should be rephrased, each must have a maximum of 85 characters, including spaces. 
+Please see: https://www.elsevier.com/authors/journal-authors/highlights
+
+- I suggest adding the link to your Github repository at the end of the Abstract for more visibility.
+
+Nice work.
+
+----------------------------
+
+Reviewer #3: Most of my concerns from my previous review have been addressed, so I suggest to accept the paper as is.
+
+----------------------------

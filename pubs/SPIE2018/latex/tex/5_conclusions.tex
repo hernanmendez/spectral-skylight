@@ -1,0 +1,10 @@
+\section{Conclusions}
+\label{sec:conclusions}
+
+We set out to develop a machine learning method for estimating sky radiance distribution curves (including VIS, VNIR, and SWIR spectra) from images captured with a hemispherical commercial digital camera. We feel this project was a success in that regard. There is still much room for future work to greater improve accuracy for cloudy and mixed sky conditions, such as: tuning the RFR model, integrating turbidity and cloud type data from remote sensed sources like the GOES satellites, interpolating radiance curves for any point of a skydome, looking at the optimal non-linear regression for different channels across different color spectra (HLS, HSV, etc.), using PZA, SZA and SPA angles instead of (or in addition to) sky coordinates, taking advantage of our HDR data, investigating many other ML approaches (ANNs, etc.).
+
+We hope this work will set the stage for future interdisciplinary research questions and experiments to help improve building energy simulation, photovoltaic placement, spectral rendering applications, etc. Having an online system that provides real-time whole sky angular spectral radiance distributions will improve real-time control systems. 
+
+%And a recurrent learning method could even be employed to improve models while they are in use.
+
+%Certainly more clear sky and color variation is desired. A great experiment would be to merge a dataset of sky images and radiance measurements from across the world and train upon that. Sky sampling pattern can vary (perhaps beneficially) so long as training/testing samples are extracted from a normalized set of images and radiance measurements (i.e. color format, exposure, pixel kernel, radiance units, etc.).

@@ -1,0 +1,55 @@
+{
+    "Filename": "config.json",
+	"Model": "etr_clear-tiff-rgb.pkl",
+    "Scaler": null,
+    "Polynomial": 0,
+	"AltitudeConstraint": 0,
+    "ColorBar": false,
+    "CoordSpace": 1,
+  	"SpectrumStart": 350,
+	"SpectrumEnd": 1780,
+    "Features": [
+        "month",
+        "quarter",
+        "weekofyear",
+        "dayofyear",
+        "hour",
+        "SunAzimuth",
+        "SunAltitude",
+        "SampleAzimuth",
+        "SunPointAngle",
+        "ColorA",
+        "ColorB",
+        "ColorC"
+    ],
+    "Lens": {
+        "Name": "Sigma 8mm f/3.5",
+		"Linearity": [
+            -0.0004325,
+            -0.0499,
+            0.0252,
+            0.7230,
+            0
+        ],
+		"Inverse": [
+			0.4171,
+			-0.3803,
+			0.1755,
+			1.3525,
+			0
+		]
+    },
+    "SPA": {
+        "time_zone": -5,
+        "delta_ut1": 0.153,
+        "delta_t": 66.9069,
+        "longitude": -76.481638,
+        "latitude": 42.443441,
+        "elevation": 325,
+        "pressure": 1032.844454,
+        "temperature": -2.9,
+        "slope": 0,
+        "azm_rotation": 0,
+        "atmos_refract": 0.5667
+    }
+}

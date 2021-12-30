@@ -1,0 +1,68 @@
+\section{Related work}
+\label{sec:background}
+
+\begin{table}%[!t]
+\begin{framed}
+\nomenclature[01]{$L_{e\Omega\lambda}$}{spectral radiance distribution (W/m\textsuperscript{2}/nm/sr)}
+\nomenclature[02]{$(P\theta,P\phi)$}{sky point of interest (azimuth, altitude) ($\degree$)}
+\nomenclature[03]{$(S\theta,S\phi)$}{sun location (azimuth, altitude) ($\degree$)}
+\nomenclature[04]{$(x,y)$}{sky image pixel coordinate}
+\nomenclature[05]{$\sigma$}{standard deviation}
+\nomenclature[06]{\textbf{SPA}}{sun point angle ($\degree$)}
+\nomenclature[07]{\textbf{ETR}}{extra trees regression model}
+\nomenclature[08]{\textbf{RFR}}{random forest regression model}
+\nomenclature[09]{\textbf{KNR}}{k-nearest-neighbor regression model}
+\nomenclature[10]{\textbf{LNR}}{linear regression model}
+\nomenclature[11]{$R^2$}{coefficient of determination score $[-1,1]$}
+\nomenclature[12]{\textbf{RMSD}}{root mean squared deviation ($\%$)}
+\printnomenclature
+\end{framed}
+\end{table}
+
+Skylight itself has been studied for well over one hundred years \citep{strutt_lightfromsky_1871, mie_beitrage_1908}. Skylight simulation models typically fall into one of three categories. Early work often simplified solar and sky models by simulating luminance distributions and salient color characteristics with simple analytical equations. Later, the atmospheric science and computer graphics communities, separately and simultaneously, proposed brute-force physically-based simulations of light transport in the atmosphere using the radiative transfer equation (RTE) \citep{chandrasekhar_1950, mishchenko_2002, chandrasekhar_radiative}. More recently, in the ``big data'' era, some researchers have attempted to model skylight with data-driven approaches, which often measure, process, and quantify large sets of data and search for correlations, usually with machine learning approaches. Modern atmospheric measuring systems installed at labs around the world are powerful and accurate, but often expensive and slow, and thus commodity sky scanning systems are more feasible for modern building performance solutions needed today \citep{butler_2008, mazria_2008}.
+
+\subsection{Analytical methods}
+
+Analytical skylight models fit parametric functions to observations of the sky \citep{pokrowski_1929, kittler_1994}. Such models were standardized by The International Commission on Illumination (CIE) to calculate the spatial distribution of skylight, and are based on measurements of luminance, indirect sky irradiance, and direct solar radiance. Early analytical approaches include the Intermediate Sky by \citet{nakamura_1985} and the UK Building Research Establishment (BRE) average sky by \citet{littlefair_1981}. \citet{lee_jr_measuring_2008} studied overcast skies to find meridional consistencies. \citet{cordero_downwelling_2013} studied albedo effect on radiance distributions (both upwelling and downwelling). One of the most popular analytical models is the all-weather model by \citet{perez_1993}, which formulated a mathematical equation with five coefficients to model sky luminance. This model was extended by \citet{preetham_model} to calculate sky color values by fitting equations to a brute-force physically-based simulation. \citet{hosek_model} made several improvements including ground albedo, more realistic turbidity, and the handling of spectral components independently. \citet{igawa_2001} and \citet{yao_2015} also improved the Perez all-sky model. All of these models produce realistic looking results, but often suffer from inaccuracies \citep{zotti_review, kider_framework_2014, bruneton_2017}.
+
+\begin{figure}[pos=tbp]
+\begin{center}
+\begin{overpic}[width=0.45\textwidth]{img/radiometry.png}%
+\put(510,630){\small{Zenith}}
+\put(520,450){\small{North}}
+\put(900,180){\small{East}}
+\put(100,50){\small{Earth}}
+\put(230,820){\small{Sun}}
+\put(650,350){\small{$P\theta$}}
+\put(730,400){\small{$P\phi$}}
+\put(360,155){\small{$S\theta$}}
+\put(355,310){\small{$S\phi$}}
+\put(840,680){\small{$L_{e\Omega\lambda}$}}
+\put(330,670){\small{SPA}}
+%\put(650,500){\rotatebox{40}{\small{Radiance}}
+\end{overpic}
+\end{center}
+\vspace{-2mm}
+\caption[radiometry]{This figure explains the coordinate space and sky coordinates of measurements used in this work. A single atmospheric spectral radiance measurement ($L_{e\Omega\lambda}$) is measured at sky coordinates $(P\theta,P\phi)$ (azimuth, altitude), taken from the ground by a custom sky scanning system. 81 such measurements were taken per sky capture. The sky coordinates of the sun $(S\theta,S\phi)$ were computed with NREL's solar position algorithm. The central angle between sun location and sky point of interest is denoted as sun-point-angle (SPA) \citep{chauvin_modelling_2015}.}
+\label{fig:radiometry}
+\end{figure}
+
+\subsection{Physically-based methods}
+
+Physically-based skylight methods produce the highest quality results of simulating skylight. They directly calculate the transfer of solar radiation in the atmosphere through the radiative transfer equation (RTE). They also directly calculate the composition of the atmosphere through Rayleigh and Mie scattering, and polarization. The atmospheric research community developed programs such as 6SV \citep{vermote_6sv}, SMARTS2 \citep{gueymard_smarts2}, MODTRAN \citep{berk_modtran}, and SBDART \citep{ricchiazzi_sbdart}, which produce accurate results, but often at high computational cost unsuitable for real-time applications. They also tend to focus on luminance and irradiance. libRadtran \citep{emde_libradtran, mayer_2005} is a popular, validated software package with various RTE solvers for atmospheric spectral radiance, irradiance, and other solar and sky properties, and is highly configurable. We use it to validate our model predictions. Like all physically-based solutions, libRadtran requires aerosol and particulate parameters and distributions \citep{hess_opac, holben_aeronet} describing the sky, to produce the most accurate simulations. An alternative physically-based approach involves even more intricate, though perhaps even more accurate, multi-scattering calculations to reconstruct spectral radiance across varying sky covers \citep{kocifaj_unified_2015, kocifaj_angular_2012, kocifaj_scattering_2009}. These calculations require accurate atmospheric measurements. Separately, the computer graphics community also has developed numerous Monte Carlo based approaches \citep{nishita_model93, nishita_model96, haber_model, jarosz_montecarlo} that merge the RTE with the rendering equation \citep{kajiya_rendering}. These methods produce pleasing visual results and often approximate the complicated scattering calculations with phase substitutions by \citet{henyey_greenstein} or \citet{cornette_shanks}.
+
+\subsection{Data-driven methods}
+
+In an increasingly ``big data'' era, were storage is cheap and data volume, velocity, and variety continues to increase exponentially, many scientists have taken a data-driven approach to solving problems \citep{gandomi_2015, sagiroglu_2013, chen_2012, laney_2001}. For modeling skylight, scientists systematically gather measurements and apply search algorithms to help model and simulate. This includes the capturing of high dynamic range (HDR) imagery \citep{stumpfel_2004}, image-based lighting, and irradiance and radiance measurements, to estimate luminance values for the sky directly from captured photographs.
+
+The most relevant work to our own comes from \citet{tohsing_validation_2014}, the most comprehensive data-driven approach to date, who used 1143 separate machine learned regression models (one per color component (RGB) per wavelength of the visible spectrum (380-760 nm)) to estimate whole sky radiance. The authors trained and tested clear and cloudy skies separately and the entire dataset was captured over a period of 12 days. 113 samples from a 3.5 hour window of a single clear sky day were used for training. Whole sky scans took 12 minutes to complete, and thus a synthetic image was used for color sampling. Our data capture was much more comprehensive, spanning an entire year, accounting for seasonal variation. Skies were captured under 3 minutes, avoiding synthetic imagery \citep{delrocco_spie}. Our methods predicts a much wider spectrum of energy (350-1780 nm), including some UV and IR, which is useful for a variety of applications. We also provide predictions for every single point in a hemispherical sky image. Finally, as opposed to a system of 1143 regression models, a single regression model is used to predict.
+
+\citet{saito_estimation_2016} improved upon the work of \citet{sigernes_sensitivity} to estimate sky radiance, specifically \textit{``without any training sets,''} by using an equation of total ozone column and raw sky image red-green-blue (RGB) counts. They focused on the zenith of the sky (single point) and estimated spectral radiance for a subset of visible wavelengths (430-680 nm). They too treat clear and cloudy skies separately. A notable contribution is the color matching functions, which took into account camera lens wavelength dependence, vignetting, and CMOS noise, and were used for cloud detection in \citet{saito_cloud}. This method should be scaled to include every single point of a sky image, both clear and cloudy, and validated against a radiative transfer package.
+
+Artificial neural networks (ANN), genetic algorithms, and pseudoinverse linear regression models were used in various projects by \citet{lopez-alvarez_using_2008, cazorla_using_2008, cazorla_development_2008}. They also used a custom sky scanner. Their models focused on visible spectra with a final dataset of 40 samples. More recently, \citet{satylmys_ann} used an ANN to model certain properties of skylight.
+
+\citet{chauvin_modelling_2015} used a custom sky imaging framework for irradiance and cloud detection for the purposes of concentrating solar plant technology. A noted contribution was their observation of the importance of the circumsolar region, in opposition of many sky models, and the central angle between sun position and sky point of interest, or sun-point-angle (SPA). Their research was used for intrahour forecasting to improve solar resource acquisition \citep{nou_intrahour}.
+
+Our research: (1) reconstructs the spectral radiance of the sky utilizing high resolution imagery, (2) accounts for seasonal and datetime variation with captures throughout an entire year, (3) accounts for fisheye lens warp, (4) predicts a wide, useful spectrum of energy (350-1780 nm) at 1 nm resolution, (5) predicts non-visible spectrum energy with indirect visible data (a novelty), (6) does so for an entire hemispherical clear sky image, (7) tests multiple exposure imagery, color model, and spectral resolution, (8) considers real-time constrained downstream applications of this work, (9) trains and compares multiple regression models, and (10) validates spectral radiance predictions against a modern atmospheric radiative transfer software package.
+
+%Pissulla et al. compare 5 separate spectroradiometers and present their measurement deviations.\cite{pissulla_comparison_2009} %Juan and Da-Ren present 3 (geometric, optical, and radiometric) calibration experiments on a sky viewer/imager.\cite{juan_calibration_2009}

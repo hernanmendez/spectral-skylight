@@ -1,0 +1,16 @@
+Hold out test days
+05/26/2013 15:15
+05/27/2013 10:15
+07/26/2013 13:15
+09/24/2013 15:39
+
+Coordinates of interest
+azimuth, altitude, zenith
+135,   71.9187, 18.0813
+135,   53.3665, 36.6335
+135,   12.1151, 77.8849
+292.5, 53.3665, 36.6335
+33.75, 12.1151, 77.8849
+
+Spectrum of interest
+360 - 830 (40nm resolution)
