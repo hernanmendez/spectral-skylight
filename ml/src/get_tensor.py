@@ -74,6 +74,9 @@ def get_samples(row, img_dir="D:\skies", radius=50):
 def display_image(image_tensor):
     plt.imshow(image_tensor.permute(1, 2, 0).numpy())
 
+def display_image_axle(ax, image_tensor):
+    ax.imshow(image_tensor.permute(1, 2, 0).numpy())
+
 def get_batch(df, index, batch_size, f):
     start = index * batch_size
     end = start + batch_size
