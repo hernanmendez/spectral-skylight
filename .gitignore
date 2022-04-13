@@ -32,3 +32,5 @@ sradmap/sandbox/*
 !ml/viz/readme.txt
 !ml/results/merge.py
 !ml/results/readme.txt
+
+ml/src/other_data
